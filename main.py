@@ -33,25 +33,9 @@ def main():
     ]
 
     for repo in repos:
-        success = False  # 成功フラグ
-        while not success:  # 成功するまでループ
-            try:
-                print("Collecting data from", repo.owner, repo.repo_name)
-                collector.generate_csv(
-                    repo.owner, repo.repo_name, labels=repo.labels, dir_path="dataset")
-                success = True  # 成功した場合、フラグをTrueにしてループを抜ける
-
-            except GithubException.RateLimitExceededException as e:
-                # レート制限に達した場合の処理
-                reset_time = collector.github.rate_limiting_resettime
-                wait_time = reset_time - time.time()
-                print(f"Rate limit exceeded. Waiting for {wait_time} seconds.")
-                time.sleep(wait_time)  # レート制限がリセットされるまで待つ
-
-            except Exception as e:
-                # その他の例外の処理
-                print(f"An error occurred: {e}")
-                break  # 重大なエラーの場合、ループを終了
+        print("Collecting data from", repo.owner, repo.repo_name)
+        collector.generate_csv(
+            repo.owner, repo.repo_name, labels=repo.labels, dir_path="dataset")
 
 
 if __name__ == "__main__":
