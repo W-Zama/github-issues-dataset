@@ -1,9 +1,10 @@
-from github_bug_data_collector.data_collector import DataCollector
 import os
+from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Pool, cpu_count
 from dotenv import load_dotenv
-from github import Github, GithubException
-import time
-from datetime import datetime
+import pandas as pd
+
+from csv_generator import csv_generator
 
 
 class Repo:
@@ -14,11 +15,7 @@ class Repo:
 
 
 def main():
-    load_dotenv()
-
-    token = os.getenv("ACCESS_TOKEN")
-    collector = DataCollector(token)
-
+    # 処理するリポジトリのリスト
     repos = [
         Repo("vercel", "next.js", ["bug"]),
         Repo("facebook", "react", ["Type: Bug"]),
@@ -33,9 +30,7 @@ def main():
     ]
 
     for repo in repos:
-        print("Collecting data from", repo.owner, repo.repo_name)
-        collector.generate_csv(
-            repo.owner, repo.repo_name, labels=repo.labels, dir_path="dataset")
+        csv_generator(repo.owner, repo.repo_name, repo.labels)
 
 
 if __name__ == "__main__":
