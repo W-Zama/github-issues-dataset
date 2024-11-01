@@ -1,45 +1,29 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
-from multiprocessing import Pool, cpu_count
 from dotenv import load_dotenv
 import pandas as pd
-
 from csv_generator import csv_generator
-
-# Repoクラス
 
 
 class Repo:
-    def __init__(self, owner, repo_name, labels):
+    def __init__(self, owner, repo_name, labels, token=None):
         self.owner = owner
         self.repo_name = repo_name
         self.labels = labels
+        self.token = token
+
+    def set_token(self, token):
+        self.token = token
 
 
-# スレッドを使ってリポジトリを並列に処理する関数
-def process_repositories_in_threads(repos):
-    with ThreadPoolExecutor(max_workers=5) as executor:  # スレッド数は調整可能
-        futures = [executor.submit(
-            csv_generator, repo.owner, repo.repo_name, repo.labels) for repo in repos]
-        for future in futures:
-            future.result()  # 各スレッドの完了を待つ
-
-
-# マルチプロセスでリポジトリを並列に処理する関数
-def process_repositories_in_parallel(repos):
-    # CPUコア数に基づいてリポジトリをプロセスごとに分割
-    num_processes = min(cpu_count(), len(repos))  # CPUコア数かリポジトリ数の少ない方
-    chunk_size = len(repos) // num_processes
-
-    repo_chunks = [repos[i:i + chunk_size]
-                   for i in range(0, len(repos), chunk_size)]
-
-    with Pool(processes=num_processes) as pool:
-        pool.map(process_repositories_in_threads, repo_chunks)
-
-
-# メイン処理
 def main():
+    load_dotenv()
+
+    # tokenを格納するリスト
+    tokens = []
+    for i in range(1, 11):
+        tokens.append(os.getenv(f"ACCESS_TOKEN{i}"))
+
     # 処理するリポジトリのリスト
     repos = [
         Repo("vercel", "next.js", ["bug"]),
@@ -54,8 +38,15 @@ def main():
         Repo("TensorFlow", "tensorflow", ["type:bug"]),
     ]
 
-    # マルチプロセスとマルチスレッドを組み合わせてリポジトリを処理
-    process_repositories_in_parallel(repos)
+    # リポジトリごとにトークンを割り当てる
+    for i, repo in enumerate(repos):
+        repo.set_token(tokens[i % len(tokens)])
+
+    # 並列処理
+    with ThreadPoolExecutor() as executor:
+        # 各リポジトリに対してcsv_generatorを並列実行
+        executor.map(lambda r: csv_generator(
+            r.owner, r.repo_name, r.labels, r.token), repos)
 
 
 if __name__ == "__main__":

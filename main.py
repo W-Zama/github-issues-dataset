@@ -32,15 +32,15 @@ def main():
     # 処理するリポジトリのリスト
     repos = [
         Repo("vercel", "next.js", ["bug"]),
-        # Repo("facebook", "react", ["Type: Bug"]),
-        # Repo("jestjs", "jest", ["Bug Report"]),
-        # Repo("prisma", "prisma", ["kind/bug"]),
-        # Repo("microsoft", "TypeScript", ["Bug"]),
-        # Repo("microsoft", "vscode", ["bug"]),
-        # Repo("microsoft", "terminal", ["Issue-Bug"]),
-        # Repo("microsoft", "PowerToys", ["Issue-Bug"]),
-        # Repo("swiftlang", "swift", ["bug"]),
-        # Repo("TensorFlow", "tensorflow", ["type:bug"]),
+        Repo("facebook", "react", ["Type: Bug"]),
+        Repo("jestjs", "jest", ["Bug Report"]),
+        Repo("prisma", "prisma", ["kind/bug"]),
+        Repo("microsoft", "TypeScript", ["Bug"]),
+        Repo("microsoft", "vscode", ["bug"]),
+        Repo("microsoft", "terminal", ["Issue-Bug"]),
+        Repo("microsoft", "PowerToys", ["Issue-Bug"]),
+        Repo("swiftlang", "swift", ["bug"]),
+        Repo("TensorFlow", "tensorflow", ["type:bug"]),
     ]
 
     # リポジトリごとにトークンを割り当てる
