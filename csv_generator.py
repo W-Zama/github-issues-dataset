@@ -4,16 +4,18 @@ import os
 import pandas as pd
 
 
-def csv_generator(ower, repo, labels):
+def csv_generator(owner, repo, labels, token):
     load_dotenv()
 
-    token = os.getenv("ACCESS_TOKEN")
     end_time = os.getenv("END_TIME")
 
     collector = DataCollector(token)
 
-    df = collector.generate_dataframe(ower, repo, labels=
-        labels, until=pd.to_datetime(end_time))
+    df = collector.generate_dataframe(
+        owner, repo, labels=labels, until=pd.to_datetime(end_time), limit=3)
 
-    df.to_csv(f"dataset/{ower}_{repo}.csv", index=False)
+    # datasetディレクトリが存在しない場合は作成
+    if not os.path.exists("dataset"):
+        os.makedirs("dataset")
 
+    df.to_csv(f"dataset/{owner}_{repo}.csv", index=False)
