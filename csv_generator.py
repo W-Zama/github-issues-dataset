@@ -12,7 +12,7 @@ def csv_generator(owner, repo, labels, token):
     collector = DataCollector(token)
 
     df = collector.generate_dataframe(
-        owner, repo, labels=labels, until=pd.to_datetime(end_time), limit=3)
+        owner, repo, labels=labels, until=pd.to_datetime(end_time))
 
     # datasetディレクトリが存在しない場合は作成
     if not os.path.exists("dataset"):
